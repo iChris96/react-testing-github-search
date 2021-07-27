@@ -1,10 +1,11 @@
 import React from "react"
+import Typography from "@material-ui/core/Typography"
 
 const GithubSearchPage = () => {
   const title = 'github repositories list';
   
   return (
-    <h1>{title}</h1>
+    <Typography variant="h4" component="h1" >{title}</Typography>
   )
 }
 

@@ -1,5 +1,5 @@
 import React from "react"
-import GithubSearchPage from './components/github-search-page/github-search-page';
+import GithubSearchPage from './components/github-search-page';
 
 function App() {
   return (
