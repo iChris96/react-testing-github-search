@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {
   TextField,
   Typography,
@@ -11,6 +11,14 @@ import {
 const GithubSearchPage = () => {
   const title = 'github repositories list'
 
+  const [isSearching, setIsSearching] = useState(false)
+
+  const handleClick = async () => {
+    setIsSearching(true)
+    await Promise.resolve()
+    setIsSearching(false)
+  }
+
   return (
     <Container>
       <Typography variant="h4" component="h1">
@@ -22,7 +30,13 @@ const GithubSearchPage = () => {
         </Grid>
 
         <Grid item md={2} xs={12}>
-          <Button fullWidth color="primary" variant="contained">
+          <Button
+            fullWidth
+            color="primary"
+            variant="contained"
+            onClick={handleClick}
+            disabled={isSearching}
+          >
             Search
           </Button>
         </Grid>

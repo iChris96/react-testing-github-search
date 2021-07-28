@@ -1,5 +1,5 @@
 import React from 'react'
-import {render, screen} from '@testing-library/react'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import GithubSearchPage from './github-search-page'
 
 describe('when the GithubSearchPage is mounted', () => {
@@ -29,5 +29,19 @@ describe('when the GithubSearchPage is mounted', () => {
     )
 
     expect(message).toBeInTheDocument()
+  })
+})
+
+describe('when the user does a search', () => {
+  beforeEach(() => render(<GithubSearchPage />))
+
+  it('the search button should be disabled until the search is done', async () => {
+    const button = screen.getByRole('button', {name: /search/i})
+
+    expect(button).not.toBeDisabled()
+
+    fireEvent.click(button)
+
+    await waitFor(() => expect(button).not.toBeDisabled())
   })
 })
