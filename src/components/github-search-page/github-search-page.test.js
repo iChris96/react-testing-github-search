@@ -1,5 +1,11 @@
 import React from 'react'
-import {fireEvent, render, screen, waitFor} from '@testing-library/react'
+import {
+  fireEvent,
+  getByRole,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import GithubSearchPage from './github-search-page'
 
 describe('when the GithubSearchPage is mounted', () => {
@@ -43,5 +49,22 @@ describe('when the user does a search', () => {
     fireEvent.click(button)
 
     await waitFor(() => expect(button).not.toBeDisabled())
+  })
+
+  it('the data should be displayed as a sticky table', async () => {
+    const button = screen.getByRole('button', {name: /search/i})
+    const message = screen.queryByText(
+      /please provide a search option and click in the search button/i,
+    ) // getByText >throw a descriptive error if no elements match // queryByText > return null if no elements match.
+
+    expect(message).toBeInTheDocument()
+
+    fireEvent.click(button)
+
+    await waitFor(() => expect(message).not.toBeInTheDocument())
+
+    const table = screen.getByRole('table')
+
+    expect(table).toBeInTheDocument()
   })
 })

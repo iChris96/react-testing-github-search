@@ -12,11 +12,13 @@ const GithubSearchPage = () => {
   const title = 'github repositories list'
 
   const [isSearching, setIsSearching] = useState(false)
+  const [isSearchDone, setIsSearchDone] = useState(false)
 
   const handleClick = async () => {
     setIsSearching(true)
     await Promise.resolve()
     setIsSearching(false)
+    setIsSearchDone(true)
   }
 
   return (
@@ -40,18 +42,21 @@ const GithubSearchPage = () => {
             Search
           </Button>
         </Grid>
-
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          height={400}
-          width="100%"
-        >
-          <Typography>
-            Please provide a search option and click in the search button
-          </Typography>
-        </Box>
+        {isSearchDone ? (
+          <table />
+        ) : (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height={400}
+            width="100%"
+          >
+            <Typography>
+              Please provide a search option and click in the search button
+            </Typography>
+          </Box>
+        )}
       </Grid>
     </Container>
   )
