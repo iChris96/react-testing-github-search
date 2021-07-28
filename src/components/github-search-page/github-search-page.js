@@ -1,5 +1,12 @@
 import React from 'react'
-import {TextField, Typography, Button, Grid, Container} from '@material-ui/core'
+import {
+  TextField,
+  Typography,
+  Button,
+  Grid,
+  Container,
+  Box,
+} from '@material-ui/core'
 
 const GithubSearchPage = () => {
   const title = 'github repositories list'
@@ -19,6 +26,18 @@ const GithubSearchPage = () => {
             Search
           </Button>
         </Grid>
+
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height={400}
+          width="100%"
+        >
+          <Typography>
+            Please provide a search option and click in the search button
+          </Typography>
+        </Box>
       </Grid>
     </Container>
   )

@@ -22,4 +22,12 @@ describe('when the GithubSearchPage is mounted', () => {
 
     expect(button).toBeInTheDocument()
   })
+
+  it('Must be an initial state message “Please provide a search option and click in the search button”', () => {
+    const message = screen.getByText(
+      /please provide a search option and click in the search button/i,
+    )
+
+    expect(message).toBeInTheDocument()
+  })
 })
