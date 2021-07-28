@@ -5,6 +5,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import GithubSearchPage from './github-search-page'
 
@@ -66,5 +67,26 @@ describe('when the user does a search', () => {
     const table = screen.getByRole('table')
 
     expect(table).toBeInTheDocument()
+  })
+
+  it('the header table must contain: Repository, stars, forks, open issues and updated at', async () => {
+    const button = screen.getByRole('button', {name: /search/i})
+    fireEvent.click(button)
+
+    const table = await screen.findByRole('table') // 'findBy' querys retuns a promise,..so lets await until table is mounted
+
+    expect(table).toBeInTheDocument()
+
+    // within > find only inside received node, in this case will only search for columnheader inside table node
+    // getAllByRole > this returns an array of elements
+    const tableHeaders = within(table).getAllByRole('columnheader')
+
+    expect(tableHeaders).toHaveLength(5)
+
+    expect(tableHeaders[0]).toHaveTextContent(/repository/i)
+    expect(tableHeaders[1]).toHaveTextContent(/stars/i)
+    expect(tableHeaders[2]).toHaveTextContent(/forks/i)
+    expect(tableHeaders[3]).toHaveTextContent(/open issues/i)
+    expect(tableHeaders[4]).toHaveTextContent(/updated at/i)
   })
 })

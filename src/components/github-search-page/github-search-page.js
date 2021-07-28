@@ -21,6 +21,33 @@ const GithubSearchPage = () => {
     setIsSearchDone(true)
   }
 
+  const renderContent = () =>
+    isSearchDone ? (
+      <table>
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th>Stars</th>
+            <th>Forks</th>
+            <th>Open issues</th>
+            <th>Updated at</th>
+          </tr>
+        </thead>
+      </table>
+    ) : (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height={400}
+        width="100%"
+      >
+        <Typography>
+          Please provide a search option and click in the search button
+        </Typography>
+      </Box>
+    )
+
   return (
     <Container>
       <Typography variant="h4" component="h1">
@@ -42,21 +69,7 @@ const GithubSearchPage = () => {
             Search
           </Button>
         </Grid>
-        {isSearchDone ? (
-          <table />
-        ) : (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            height={400}
-            width="100%"
-          >
-            <Typography>
-              Please provide a search option and click in the search button
-            </Typography>
-          </Box>
-        )}
+        {renderContent()}
       </Grid>
     </Container>
   )
