@@ -6,6 +6,12 @@ import {
   Grid,
   Container,
   Box,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Table,
+  Link,
 } from '@material-ui/core'
 
 const GithubSearchPage = () => {
@@ -23,17 +29,36 @@ const GithubSearchPage = () => {
 
   const renderContent = () =>
     isSearchDone ? (
-      <table>
-        <thead>
-          <tr>
-            <th>Repository</th>
-            <th>Stars</th>
-            <th>Forks</th>
-            <th>Open issues</th>
-            <th>Updated at</th>
-          </tr>
-        </thead>
-      </table>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Repository</TableCell>
+            <TableCell>Stars</TableCell>
+            <TableCell>Forks</TableCell>
+            <TableCell>Open issues</TableCell>
+            <TableCell>Updated at</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell>
+              <img alt="myimg" src="/logo192.png" />
+              <Link href="http://localhost:3000">Test</Link>
+            </TableCell>
+            <TableCell>10</TableCell>
+            <TableCell>5</TableCell>
+            <TableCell>2</TableCell>
+            <TableCell>2020-01-01</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>NotionApp</TableCell>
+            <TableCell>10</TableCell>
+            <TableCell>5</TableCell>
+            <TableCell>2</TableCell>
+            <TableCell>2020-01-01</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     ) : (
       <Box
         display="flex"
@@ -53,7 +78,7 @@ const GithubSearchPage = () => {
       <Typography variant="h4" component="h1">
         {title}
       </Typography>
-      <Grid container spacing={2} justify="space-between">
+      <Grid container spacing={2} justifyContent="space-between">
         <Grid item md={6} xs={12}>
           <TextField fullWidth label="Filter by" id="filterBy" />
         </Grid>

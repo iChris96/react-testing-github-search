@@ -89,4 +89,57 @@ describe('when the user does a search', () => {
     expect(tableHeaders[3]).toHaveTextContent(/open issues/i)
     expect(tableHeaders[4]).toHaveTextContent(/updated at/i)
   })
+
+  const fireClickSearch = () => {
+    const button = screen.getByRole('button', {name: /search/i})
+    fireEvent.click(button)
+  }
+
+  it('each table result must contain: repository name, starts, forks, open issue, updated at', async () => {
+    fireClickSearch()
+
+    const table = await screen.findByRole('table')
+
+    // within > find only inside received node, in this case will only search for columnheader inside table node
+    // getAllByRole > this returns an array of elements
+    const tableCells = within(table).getAllByRole('cell')
+
+    expect(tableCells).toHaveLength(10)
+
+    const [repository, stars, forks, openIssues, updatedAt, repository2] =
+      tableCells
+
+    expect(repository).toHaveTextContent(/test/i)
+    expect(stars).toHaveTextContent(/10/i)
+    expect(forks).toHaveTextContent(/5/i)
+    expect(openIssues).toHaveTextContent(/2/i)
+    expect(updatedAt).toHaveTextContent(/2020-01-01/i)
+    expect(repository2).toHaveTextContent(/notionapp/i) //  repository2 is the first element from second row
+  })
+
+  it('repository result should have an image', async () => {
+    fireClickSearch()
+
+    const table = await screen.findByRole('table')
+    const tableCells = within(table).getAllByRole('cell')
+
+    const firstRowRepositoryValue = tableCells[0]
+
+    const img = within(firstRowRepositoryValue).getByRole('img', {
+      name: /myimg/i,
+    })
+
+    expect(img).toBeInTheDocument()
+  })
+
+  it('some result should have a hyper link', async () => {
+    fireClickSearch()
+
+    const table = await screen.findByRole('table')
+
+    // closest > Returns the first (starting at element) inclusive ancestor that matches selectors, and null otherwise.
+    const link = within(table).getByText(/test/i).closest('a')
+
+    expect(link).toHaveAttribute('href', 'http://localhost:3000')
+  })
 })
