@@ -142,4 +142,13 @@ describe('when the user does a search', () => {
 
     expect(link).toHaveAttribute('href', 'http://localhost:3000')
   })
+
+  it('must display the total results number of search and the current number of results', async () => {
+    fireClickSearch()
+
+    await screen.findByRole('table')
+    const pageText = screen.getByText(/1-1 of 1/i)
+
+    expect(pageText).toBeInTheDocument()
+  })
 })
