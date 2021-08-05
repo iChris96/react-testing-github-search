@@ -1,13 +1,46 @@
 import React from 'react'
 import {
   fireEvent,
-  getByRole,
   render,
   screen,
   waitFor,
   within,
 } from '@testing-library/react'
+import {rest} from 'msw'
+import {setupServer} from 'msw/node'
 import GithubSearchPage from './github-search-page'
+
+const fakeRepo = {
+  id: '56757919',
+  name: 'django-rest-framework-reactive',
+  owner: {
+    avatar_url: 'https://avatars0.githubusercontent.com/u/2120224?v=4',
+  },
+  html_url: 'https://github.com/genialis/django-rest-framework-reactive',
+  updated_at: '2020-10-24',
+  stargazers_count: 58,
+  forks_count: 9,
+  open_issues_count: 0,
+}
+
+const server = setupServer(
+  rest.get('/search/repositories', (req, res, ctx) =>
+    res(
+      ctx.status(200),
+      ctx.json({
+        total_count: 8643,
+        incomplete_results: false,
+        items: [fakeRepo, {...fakeRepo, id: '12345'}],
+      }),
+    ),
+  ),
+)
+
+beforeAll(() => server.listen())
+
+afterEach(() => server.resetHandlers())
+
+afterAll(() => server.close())
 
 describe('when the GithubSearchPage is mounted', () => {
   beforeEach(() => render(<GithubSearchPage />))
@@ -109,12 +142,12 @@ describe('when the user does a search', () => {
     const [repository, stars, forks, openIssues, updatedAt, repository2] =
       tableCells
 
-    expect(repository).toHaveTextContent(/test/i)
-    expect(stars).toHaveTextContent(/10/i)
-    expect(forks).toHaveTextContent(/5/i)
-    expect(openIssues).toHaveTextContent(/2/i)
-    expect(updatedAt).toHaveTextContent(/2020-01-01/i)
-    expect(repository2).toHaveTextContent(/notionapp/i) //  repository2 is the first element from second row
+    expect(repository).toHaveTextContent(fakeRepo.name)
+    expect(stars).toHaveTextContent(fakeRepo.stargazers_count)
+    expect(forks).toHaveTextContent(fakeRepo.forks_count)
+    expect(openIssues).toHaveTextContent(fakeRepo.open_issues_count)
+    expect(updatedAt).toHaveTextContent(fakeRepo.updated_at)
+    expect(repository2).toHaveTextContent(fakeRepo.name) //  repository2 is the first element from second row
   })
 
   it('repository result should have an image', async () => {
@@ -126,10 +159,11 @@ describe('when the user does a search', () => {
     const firstRowRepositoryValue = tableCells[0]
 
     const img = within(firstRowRepositoryValue).getByRole('img', {
-      name: /myimg/i,
+      name: fakeRepo.name,
     })
 
     expect(img).toBeInTheDocument()
+    expect(img).toHaveAttribute('src', fakeRepo.owner.avatar_url)
   })
 
   it('some result should have a hyper link', async () => {
@@ -138,9 +172,9 @@ describe('when the user does a search', () => {
     const table = await screen.findByRole('table')
 
     // closest > Returns the first (starting at element) inclusive ancestor that matches selectors, and null otherwise.
-    const link = within(table).getByText(/test/i).closest('a')
+    const link = within(table).getAllByText(fakeRepo.name)[0].closest('a')
 
-    expect(link).toHaveAttribute('href', 'http://localhost:3000')
+    expect(link).toHaveAttribute('href', fakeRepo.html_url)
   })
 
   it('must display the total results number of search and the current number of results', async () => {

@@ -7,10 +7,13 @@ const GithubSearchPage = () => {
 
   const [isSearching, setIsSearching] = useState(false)
   const [isSearchDone, setIsSearchDone] = useState(false)
+  const [repoList, setRepoList] = useState([])
 
   const handleClick = async () => {
     setIsSearching(true)
-    await Promise.resolve()
+    const response = await fetch('/search/repositories')
+    const data = await response.json()
+    setRepoList(data.items)
     setIsSearching(false)
     setIsSearchDone(true)
   }
@@ -36,7 +39,7 @@ const GithubSearchPage = () => {
             Search
           </Button>
         </Grid>
-        <Content isSearchDone={isSearchDone} />
+        <Content isSearchDone={isSearchDone} repoList={repoList} />
       </Grid>
     </Container>
   )

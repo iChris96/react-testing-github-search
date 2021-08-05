@@ -22,7 +22,7 @@ const TABLE_HEADERS = [
   'Updated at',
 ]
 
-export const Content = ({isSearchDone}) =>
+export const Content = ({isSearchDone, repoList}) =>
   isSearchDone ? (
     <>
       <TableContainer>
@@ -35,23 +35,29 @@ export const Content = ({isSearchDone}) =>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                <Avatar alt="myimg" src="/logo192.png" />
-                <Link href="http://localhost:3000">Test</Link>
-              </TableCell>
-              <TableCell>10</TableCell>
-              <TableCell>5</TableCell>
-              <TableCell>2</TableCell>
-              <TableCell>2020-01-01</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>NotionApp</TableCell>
-              <TableCell>10</TableCell>
-              <TableCell>5</TableCell>
-              <TableCell>2</TableCell>
-              <TableCell>2020-01-01</TableCell>
-            </TableRow>
+            {repoList.map(
+              ({
+                name,
+                id,
+                stargazers_count: stargazersCount,
+                forks_count: forksCount,
+                open_issues_count: openIssuesCount,
+                updated_at: updatedAt,
+                owner: {avatar_url: avatarUrl},
+                html_url: htmlUrl,
+              }) => (
+                <TableRow key={id}>
+                  <TableCell>
+                    <Avatar alt={name} src={avatarUrl} />
+                    <Link href={htmlUrl}>{name}</Link>
+                  </TableCell>
+                  <TableCell>{stargazersCount}</TableCell>
+                  <TableCell>{forksCount}</TableCell>
+                  <TableCell>{openIssuesCount}</TableCell>
+                  <TableCell>{updatedAt}</TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
       </TableContainer>
