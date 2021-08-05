@@ -42,6 +42,11 @@ afterEach(() => server.resetHandlers())
 
 afterAll(() => server.close())
 
+const fireClickSearch = () => {
+  const button = screen.getByRole('button', {name: /search/i})
+  fireEvent.click(button)
+}
+
 describe('when the GithubSearchPage is mounted', () => {
   beforeEach(() => render(<GithubSearchPage />))
 
@@ -122,11 +127,6 @@ describe('when the user does a search', () => {
     expect(tableHeaders[3]).toHaveTextContent(/open issues/i)
     expect(tableHeaders[4]).toHaveTextContent(/updated at/i)
   })
-
-  const fireClickSearch = () => {
-    const button = screen.getByRole('button', {name: /search/i})
-    fireEvent.click(button)
-  }
 
   it('each table result must contain: repository name, starts, forks, open issue, updated at', async () => {
     fireClickSearch()
@@ -221,5 +221,34 @@ describe('when the user does a search', () => {
     expect(nextPageBtn).toBeInTheDocument()
 
     expect(nextPageBtn).toBeDisabled()
+  })
+})
+
+describe('when user does a serach without results', () => {
+  beforeEach(() => render(<GithubSearchPage />))
+
+  it('must be a empty state message: "You search has no results"', async () => {
+    server.use(
+      rest.get('/search/repositories', (req, res, ctx) =>
+        res(
+          ctx.status(200),
+          ctx.json({
+            total_count: 0,
+            incomplete_results: false,
+            items: [],
+          }),
+        ),
+      ),
+    )
+
+    fireClickSearch()
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/you search has no results/i),
+      ).toBeInTheDocument(),
+    )
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 })
