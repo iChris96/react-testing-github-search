@@ -146,9 +146,46 @@ describe('when the user does a search', () => {
   it('must display the total results number of search and the current number of results', async () => {
     fireClickSearch()
 
-    await screen.findByRole('table')
+    await screen.findByRole('table') // await until table is rendered
     const pageText = screen.getByText(/1-1 of 1/i)
 
     expect(pageText).toBeInTheDocument()
+  })
+
+  it('results size per page select/combobox with the options: 30, 50, 100. The default is 30.', async () => {
+    fireClickSearch()
+
+    await screen.findByRole('table') // await until table is rendered
+
+    const pageSelector = screen.getByLabelText(/rows per page/i)
+    expect(pageSelector).toBeInTheDocument()
+
+    fireEvent.mouseDown(pageSelector) // display option values
+
+    const listBox = screen.getByRole('listbox', {name: /rows per page/i}) // options container
+
+    const options = within(listBox).getAllByRole('option')
+
+    const [op1, op2, op3] = options
+
+    expect(op1).toHaveTextContent(/30/)
+    expect(op2).toHaveTextContent(/50/)
+    expect(op3).toHaveTextContent(/100/)
+  })
+
+  it('must exists the next and previous pagination button', async () => {
+    fireClickSearch()
+
+    await screen.findByRole('table') // await until table is rendered
+
+    const previousPageBtn = screen.getByRole('button', {name: /previous page/i})
+
+    expect(previousPageBtn).toBeInTheDocument()
+
+    const nextPageBtn = screen.getByRole('button', {name: /next page/i})
+
+    expect(nextPageBtn).toBeInTheDocument()
+
+    expect(nextPageBtn).toBeDisabled()
   })
 })

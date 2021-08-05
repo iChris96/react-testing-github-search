@@ -56,9 +56,10 @@ export const Content = ({isSearchDone}) =>
         </Table>
       </TableContainer>
       <TablePagination
+        rowsPerPageOptions={[30, 50, 100]}
         component="div"
         count={1}
-        rowsPerPage={10}
+        rowsPerPage={30}
         page={0}
         onPageChange={() => {}}
       />
