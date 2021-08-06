@@ -10,29 +10,17 @@ import {rest} from 'msw'
 import {setupServer} from 'msw/node'
 import GithubSearchPage from './github-search-page'
 
-const fakeRepo = {
-  id: '56757919',
-  name: 'django-rest-framework-reactive',
-  owner: {
-    avatar_url: 'https://avatars0.githubusercontent.com/u/2120224?v=4',
-  },
-  html_url: 'https://github.com/genialis/django-rest-framework-reactive',
-  updated_at: '2020-10-24',
-  stargazers_count: 58,
-  forks_count: 9,
-  open_issues_count: 0,
-}
+import {makeFakeResponse, makeFakeRepo} from '../../__fixtures__/repos'
+
+const fakeResponse = makeFakeResponse({totalCount: 1})
+
+const fakeRepo = makeFakeRepo()
+
+fakeResponse.items = [fakeRepo, {...fakeRepo, id: '12345'}]
 
 const server = setupServer(
   rest.get('/search/repositories', (req, res, ctx) =>
-    res(
-      ctx.status(200),
-      ctx.json({
-        total_count: 8643,
-        incomplete_results: false,
-        items: [fakeRepo, {...fakeRepo, id: '12345'}],
-      }),
-    ),
+    res(ctx.status(200), ctx.json(fakeResponse)),
   ),
 )
 
