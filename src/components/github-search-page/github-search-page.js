@@ -1,5 +1,6 @@
 import {Button, Container, Grid, TextField, Typography} from '@material-ui/core'
 import React, {useState} from 'react'
+import {getGitRepose} from '../../services'
 import {Content} from '../content'
 
 const GithubSearchPage = () => {
@@ -11,7 +12,7 @@ const GithubSearchPage = () => {
 
   const handleClick = async () => {
     setIsSearching(true)
-    const response = await fetch('/search/repositories')
+    const response = await getGitRepose()
     const data = await response.json()
     setRepoList(data.items)
     setIsSearching(false)
