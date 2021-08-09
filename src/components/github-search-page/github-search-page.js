@@ -9,15 +9,18 @@ const GithubSearchPage = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [isSearchDone, setIsSearchDone] = useState(false)
   const [repoList, setRepoList] = useState([])
+  const [searchBy, setSearchBy] = useState('')
 
   const handleClick = async () => {
     setIsSearching(true)
-    const response = await getGitRepose()
+    const response = await getGitRepose({q: searchBy})
     const data = await response.json()
     setRepoList(data.items)
     setIsSearching(false)
     setIsSearchDone(true)
   }
+
+  const handleFilterByChange = ({target: {value}}) => setSearchBy(value)
 
   return (
     <Container>
@@ -26,7 +29,13 @@ const GithubSearchPage = () => {
       </Typography>
       <Grid container spacing={2} justifyContent="space-between">
         <Grid item md={6} xs={12}>
-          <TextField fullWidth label="Filter by" id="filterBy" />
+          <TextField
+            fullWidth
+            label="Filter by"
+            id="filterBy"
+            value={searchBy}
+            onChange={handleFilterByChange}
+          />
         </Grid>
 
         <Grid item md={2} xs={12}>
