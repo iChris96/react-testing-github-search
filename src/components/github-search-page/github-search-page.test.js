@@ -18,7 +18,8 @@ import {
   getReposPerPage,
 } from '../../__fixtures__/repos'
 
-const fakeResponse = makeFakeResponse({totalCount: 1})
+const TOTAL_COUNT = 1
+const fakeResponse = makeFakeResponse({totalCount: TOTAL_COUNT})
 
 const fakeRepo = makeFakeRepo()
 
@@ -331,4 +332,51 @@ describe('when the user does a search and selects 50 rows per page', () => {
     const rows51 = await screen.getAllByRole('row')
     expect(rows51).toHaveLength(51)
   })
+})
+
+describe('when the user click on search and then on next page button', () => {
+  beforeEach(() => render(<GithubSearchPage />))
+
+  it('must display the next repositories page', async () => {
+    // config server handler
+    server.use(
+      rest.get('/search/repositories', (req, res, ctx) => {
+        const defaultResponse = makeFakeResponse()
+        const perPage = Number(req.url.searchParams.get('per_page'))
+        const currentPage = Number(req.url.searchParams.get('page'))
+        const customResponse = {
+          ...defaultResponse,
+          items: getReposPerPage({perPage, currentPage}),
+        }
+        return res(ctx.status(200), ctx.json(customResponse))
+      }),
+    )
+    // click search
+    fireClickSearch()
+
+    // wait table
+    const table = await screen.findByRole('table')
+    expect(table).toBeInTheDocument()
+
+    // expect first repo name is from page 0
+    const repoCell = screen.getByRole('cell', {name: /1-0/i})
+    expect(repoCell).toBeInTheDocument()
+
+    // expect next page is not disabled
+    const nextPageBtn = screen.getByRole('button', {name: /next page/i})
+    expect(nextPageBtn).not.toBeDisabled()
+
+    // click next page button
+    fireEvent.click(nextPageBtn)
+
+    // wait search button is not disabled
+    const searchBtn = screen.getByRole('button', {name: /search/i})
+    expect(searchBtn).toBeDisabled()
+
+    await waitFor(() => expect(searchBtn).not.toBeDisabled(), {timeout: 3000})
+
+    // expect fist repo name is from page 1
+    const repoCell2 = screen.getByRole('cell', {name: /2-0/i})
+    expect(repoCell2).toBeInTheDocument()
+  }, 10000)
 })

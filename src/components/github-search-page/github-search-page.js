@@ -20,6 +20,8 @@ const GithubSearchPage = () => {
   const [isSearchDone, setIsSearchDone] = useState(false)
   const [repoList, setRepoList] = useState([])
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE)
+  const [actualPage, setActualPage] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
 
   const didMount = useRef(false)
   const searchBy = useRef(null)
@@ -29,14 +31,17 @@ const GithubSearchPage = () => {
     const response = await getGitRepose({
       q: searchBy.current.value,
       rowsPerPage,
+      actualPage,
     })
     const data = await response.json()
     setRepoList(data.items)
     setIsSearching(false)
     setIsSearchDone(true)
-  }, [rowsPerPage, searchBy])
+    setTotalCount(data.total_count)
+  }, [rowsPerPage, actualPage])
 
-  const handleOnPageChange = event => setRowsPerPage(event.target.value)
+  const handleOnPerPageChange = event => setRowsPerPage(event.target.value)
+  const handleOnPageChange = (event, newPage) => setActualPage(newPage)
 
   useEffect(() => {
     if (!didMount.current) {
@@ -77,11 +82,11 @@ const GithubSearchPage = () => {
           <TablePagination
             rowsPerPageOptions={[30, 50, 100]}
             component="div"
-            count={1}
+            count={totalCount}
             rowsPerPage={rowsPerPage}
-            page={0}
-            onPageChange={() => {}}
-            onRowsPerPageChange={handleOnPageChange}
+            page={actualPage}
+            onPageChange={handleOnPageChange}
+            onRowsPerPageChange={handleOnPerPageChange}
           />
         </Content>
       </Grid>

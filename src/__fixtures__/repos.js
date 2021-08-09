@@ -1,7 +1,7 @@
 import repos30Paginated from './repos-30-paginated.json'
 import repos50Paginated from './repos-50-paginated.json'
 
-export const makeFakeResponse = ({totalCount = 0} = {}) => ({
+export const makeFakeResponse = ({totalCount = 1000} = {}) => ({
   total_count: totalCount,
   items: [],
 })
