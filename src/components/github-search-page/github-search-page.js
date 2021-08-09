@@ -1,7 +1,17 @@
-import {Button, Container, Grid, TextField, Typography} from '@material-ui/core'
+import {
+  Button,
+  Container,
+  Grid,
+  TablePagination,
+  TextField,
+  Typography,
+} from '@material-ui/core'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {getGitRepose} from '../../services'
 import {Content} from '../content'
+import GithubTable from '../github-table'
+
+const ROWS_PER_PAGE = 30
 
 const GithubSearchPage = () => {
   const title = 'github repositories list'
@@ -10,7 +20,7 @@ const GithubSearchPage = () => {
   const [isSearchDone, setIsSearchDone] = useState(false)
   const [repoList, setRepoList] = useState([])
   const [searchBy, setSearchBy] = useState('react')
-  const [rowsPerPage, setRowsPerPage] = useState(30)
+  const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE)
 
   const didMount = useRef(false)
 
@@ -24,6 +34,7 @@ const GithubSearchPage = () => {
   }, [rowsPerPage, searchBy])
 
   const handleFilterByChange = ({target: {value}}) => setSearchBy(value)
+  const handleOnPageChange = event => setRowsPerPage(event.target.value)
 
   useEffect(() => {
     if (!didMount.current) {
@@ -60,12 +71,18 @@ const GithubSearchPage = () => {
             Search
           </Button>
         </Grid>
-        <Content
-          isSearchDone={isSearchDone}
-          repoList={repoList}
-          rowsPerPage={rowsPerPage}
-          setRowsPerPage={setRowsPerPage}
-        />
+        <Content isSearchDone={isSearchDone} repoList={repoList}>
+          <GithubTable repoList={repoList} />
+          <TablePagination
+            rowsPerPageOptions={[30, 50, 100]}
+            component="div"
+            count={1}
+            rowsPerPage={rowsPerPage}
+            page={0}
+            onPageChange={() => {}}
+            onRowsPerPageChange={handleOnPageChange}
+          />
+        </Content>
       </Grid>
     </Container>
   )
