@@ -14,6 +14,7 @@ import {
   makeFakeResponse,
   makeFakeRepo,
   getReposListBy,
+  getReposPerPage,
 } from '../../__fixtures__/repos'
 
 const fakeResponse = makeFakeResponse({totalCount: 1})
@@ -248,11 +249,11 @@ describe('when user does a serach without results', () => {
 describe('when the developer types on filter by and does a seach', () => {
   beforeEach(() => render(<GithubSearchPage />))
 
-  const expectedRepoName = 'laravel'
-  const expectedFirstRepo = getReposListBy({name: expectedRepoName})[0]
-
   it('must display the related repos', async () => {
     // setup the mock server
+    const expectedRepoName = 'laravel'
+    const expectedFirstRepo = getReposListBy({name: expectedRepoName})[0]
+
     server.use(
       rest.get('/search/repositories', (req, res, ctx) => {
         const defaultResponse = makeFakeResponse()
@@ -283,5 +284,41 @@ describe('when the developer types on filter by and does a seach', () => {
     expect(table).toBeInTheDocument()
 
     expect(repository).toHaveTextContent(expectedFirstRepo.name)
+  })
+})
+
+describe('when the user does a search and selects 50 rows per page', () => {
+  beforeEach(() => render(<GithubSearchPage />))
+
+  it('must fetch a new search and display 50 results on the table', async () => {
+    // config mock server response
+    server.use(
+      rest.get('/search/repositories', (req, res, ctx) => {
+        const defaultResponse = makeFakeResponse()
+        const perPage = Number(req.url.searchParams.get('per_page'))
+        const currentPage = Number(req.url.searchParams.get('page'))
+        const customResponse = {
+          ...defaultResponse,
+          items: getReposPerPage({perPage, currentPage}),
+        }
+        return res(ctx.status(200), ctx.json(customResponse))
+      }),
+    )
+    // click search
+    fireClickSearch()
+
+    // expect 30 rows length
+    const table = await screen.findByRole('table')
+    expect(table).toBeInTheDocument()
+    const rows31 = await screen.getAllByRole('row')
+    expect(rows31).toHaveLength(31) // headers also count as a row
+
+    // select 50 per page
+    fireEvent.mouseDown(screen.getByLabelText(/rows per page/i))
+    fireEvent.click(screen.getByRole('option', {name: '50'}))
+
+    // expect 50 rows length
+    const rows51 = await screen.getAllByRole('row')
+    expect(rows51).toHaveLength(51)
   })
 })
