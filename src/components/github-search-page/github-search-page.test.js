@@ -375,8 +375,19 @@ describe('when the user click on search and then on next page button', () => {
 
     await waitFor(() => expect(searchBtn).not.toBeDisabled(), {timeout: 3000})
 
-    // expect fist repo name is from page 1
+    // expect first repo name is from page 1
     const repoCell2 = screen.getByRole('cell', {name: /2-0/i})
     expect(repoCell2).toBeInTheDocument()
+
+    // click previous page
+    const previousPageBtn = screen.getByRole('button', {name: /previous page/i})
+    fireEvent.click(previousPageBtn)
+
+    // wait search finish
+    await waitFor(() => expect(searchBtn).not.toBeDisabled(), {timeout: 3000})
+
+    // expect first repo name is from page 0
+    const repoCell3 = screen.getByRole('cell', {name: /1-0/i})
+    expect(repoCell3).toBeInTheDocument()
   }, 10000)
 })

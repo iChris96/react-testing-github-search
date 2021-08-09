@@ -12,6 +12,8 @@ import {Content} from '../content'
 import GithubTable from '../github-table'
 
 const ROWS_PER_PAGE = 30
+const INITIAL_ACTUAL_PAGE = 0
+const INITIAL_TOTAL_COUNT = 0
 
 const GithubSearchPage = () => {
   const title = 'github repositories list'
@@ -20,8 +22,8 @@ const GithubSearchPage = () => {
   const [isSearchDone, setIsSearchDone] = useState(false)
   const [repoList, setRepoList] = useState([])
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE)
-  const [actualPage, setActualPage] = useState(0)
-  const [totalCount, setTotalCount] = useState(0)
+  const [actualPage, setActualPage] = useState(INITIAL_ACTUAL_PAGE)
+  const [totalCount, setTotalCount] = useState(INITIAL_TOTAL_COUNT)
 
   const didMount = useRef(false)
   const searchBy = useRef(null)
