@@ -22,7 +22,17 @@ const TABLE_HEADERS = [
   'Updated at',
 ]
 
-export const Content = ({isSearchDone, repoList}) => {
+export const Content = ({
+  isSearchDone,
+  repoList,
+  rowsPerPage,
+  setRowsPerPage,
+}) => {
+  const handleOnPageChange = event => {
+    console.log('val', event.target.value)
+    setRowsPerPage(event.target.value)
+  }
+
   if (isSearchDone && !!repoList.length)
     return (
       <>
@@ -66,9 +76,10 @@ export const Content = ({isSearchDone, repoList}) => {
           rowsPerPageOptions={[30, 50, 100]}
           component="div"
           count={1}
-          rowsPerPage={30}
+          rowsPerPage={rowsPerPage}
           page={0}
           onPageChange={() => {}}
+          onRowsPerPageChange={handleOnPageChange}
         />
       </>
     )

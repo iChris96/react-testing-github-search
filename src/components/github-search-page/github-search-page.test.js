@@ -3,6 +3,7 @@ import {
   fireEvent,
   render,
   screen,
+  wait,
   waitFor,
   within,
 } from '@testing-library/react'
@@ -318,6 +319,10 @@ describe('when the user does a search and selects 50 rows per page', () => {
     fireEvent.click(screen.getByRole('option', {name: '50'}))
 
     // expect 50 rows length
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', {name: /search/i})).not.toBeDisabled(),
+    )
     const rows51 = await screen.getAllByRole('row')
     expect(rows51).toHaveLength(51)
   })
