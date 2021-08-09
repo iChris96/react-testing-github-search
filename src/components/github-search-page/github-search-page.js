@@ -19,21 +19,23 @@ const GithubSearchPage = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [isSearchDone, setIsSearchDone] = useState(false)
   const [repoList, setRepoList] = useState([])
-  const [searchBy, setSearchBy] = useState('react')
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE)
 
   const didMount = useRef(false)
+  const searchBy = useRef(null)
 
   const handleClick = useCallback(async () => {
     setIsSearching(true)
-    const response = await getGitRepose({q: searchBy, rowsPerPage})
+    const response = await getGitRepose({
+      q: searchBy.current.value,
+      rowsPerPage,
+    })
     const data = await response.json()
     setRepoList(data.items)
     setIsSearching(false)
     setIsSearchDone(true)
   }, [rowsPerPage, searchBy])
 
-  const handleFilterByChange = ({target: {value}}) => setSearchBy(value)
   const handleOnPageChange = event => setRowsPerPage(event.target.value)
 
   useEffect(() => {
@@ -55,8 +57,7 @@ const GithubSearchPage = () => {
             fullWidth
             label="Filter by"
             id="filterBy"
-            value={searchBy}
-            onChange={handleFilterByChange}
+            inputRef={searchBy}
           />
         </Grid>
 
