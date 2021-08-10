@@ -58,7 +58,10 @@ const GithubSearchPage = () => {
     }
   }, [rowsPerPage, actualPage])
 
-  const handleOnPerPageChange = event => setRowsPerPage(event.target.value)
+  const handleOnPerPageChange = event => {
+    setRowsPerPage(event.target.value)
+    setActualPage(INITIAL_ACTUAL_PAGE)
+  }
   const handleOnPageChange = (event, newPage) => setActualPage(newPage)
 
   useEffect(() => {
