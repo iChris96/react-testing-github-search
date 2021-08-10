@@ -2,6 +2,7 @@ import {
   Button,
   Container,
   Grid,
+  Snackbar,
   TablePagination,
   TextField,
   Typography,
@@ -24,22 +25,37 @@ const GithubSearchPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE)
   const [actualPage, setActualPage] = useState(INITIAL_ACTUAL_PAGE)
   const [totalCount, setTotalCount] = useState(INITIAL_TOTAL_COUNT)
+  const [isSnackOpen, setIsSnackOpen] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   const didMount = useRef(false)
   const searchBy = useRef(null)
 
   const handleClick = useCallback(async () => {
-    setIsSearching(true)
-    const response = await getGitRepose({
-      q: searchBy.current.value,
-      rowsPerPage,
-      actualPage,
-    })
-    const data = await response.json()
-    setRepoList(data.items)
-    setIsSearching(false)
-    setIsSearchDone(true)
-    setTotalCount(data.total_count)
+    try {
+      setIsSearching(true)
+      const response = await getGitRepose({
+        q: searchBy.current.value,
+        rowsPerPage,
+        actualPage,
+      })
+
+      if (!response.ok) {
+        // response.ok -> 200..299 status code
+        throw response
+      }
+
+      const data = await response.json()
+      setRepoList(data.items)
+      setIsSearching(false)
+      setTotalCount(data.total_count)
+    } catch (err) {
+      const data = await err.json()
+      setIsSnackOpen(true)
+      setErrorMsg(data.msg)
+    } finally {
+      setIsSearchDone(true)
+    }
   }, [rowsPerPage, actualPage])
 
   const handleOnPerPageChange = event => setRowsPerPage(event.target.value)
@@ -92,6 +108,7 @@ const GithubSearchPage = () => {
           />
         </Content>
       </Grid>
+      <Snackbar open={isSnackOpen} message={errorMsg} />
     </Container>
   )
 }
