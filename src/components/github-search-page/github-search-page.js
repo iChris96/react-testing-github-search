@@ -31,7 +31,7 @@ const GithubSearchPage = () => {
   const didMount = useRef(false)
   const searchBy = useRef(null)
 
-  const handleClick = useCallback(async () => {
+  const handleSearch = useCallback(async () => {
     try {
       setIsSearching(true)
       const response = await getGitRepose({
@@ -58,6 +58,14 @@ const GithubSearchPage = () => {
     }
   }, [rowsPerPage, actualPage])
 
+  const handleClick = () => {
+    if (actualPage === INITIAL_ACTUAL_PAGE) {
+      handleSearch()
+      return
+    }
+    setActualPage(INITIAL_ACTUAL_PAGE)
+  }
+
   const handleOnPerPageChange = event => {
     setRowsPerPage(event.target.value)
     setActualPage(INITIAL_ACTUAL_PAGE)
@@ -69,8 +77,8 @@ const GithubSearchPage = () => {
       didMount.current = true
       return
     }
-    handleClick()
-  }, [rowsPerPage, handleClick])
+    handleSearch()
+  }, [handleSearch])
 
   return (
     <Container>
