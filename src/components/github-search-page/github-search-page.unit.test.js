@@ -10,17 +10,11 @@ import {setupServer} from 'msw/node'
 import React from 'react'
 import {
   getReposListBy,
-  makeFakeRepo,
   makeFakeResponse,
+  fakeResponse,
+  fakeRepo,
 } from '../../__fixtures__/repos'
 import GithubSearchPage from './github-search-page'
-
-const TOTAL_COUNT = 1
-const fakeResponse = makeFakeResponse({totalCount: TOTAL_COUNT})
-
-const fakeRepo = makeFakeRepo()
-
-fakeResponse.items = [fakeRepo, {...fakeRepo, id: '12345'}]
 
 const server = setupServer(
   rest.get('/search/repositories', (req, res, ctx) =>
